@@ -1,0 +1,39 @@
+services:
+  app:
+    build: .
+    container_name: rails_app
+    volumes:
+      - ./rails-app:/usr/src/app/rails-app:cached
+      - bundle_cache:/usr/local/bundle
+    ports:
+      - "3000:3000"
+    environment:
+      RAILS_ENV: development
+      BUNDLE_PATH: /usr/local/bundle
+    depends_on:
+      - db
+      - redis
+
+  db:
+    image: postgres:14
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  redis:
+    image: redis:7
+    container_name: redis_cache
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+
+volumes:
+  bundle_cache:
+  postgres_data:
+  redis_data:
